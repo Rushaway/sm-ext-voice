@@ -749,7 +749,7 @@ void CVoice::HandleVoiceData()
 	int SamplesPerFrame = m_EncoderSettings.FrameSize;
 	int PacketSize = m_EncoderSettings.PacketSize;
 	int FramesAvailable = m_Buffer.TotalLength() / SamplesPerFrame;
-	float TimeAvailable = (float)m_Buffer.TotalLength() / (float)m_EncoderSettings.SampleRate_Hz;
+	float TimeAvailable = static_cast<float>(m_Buffer.TotalLength()) / m_EncoderSettings.SampleRate_Hz;
 
 	if(!FramesAvailable)
 		return;
@@ -790,10 +790,6 @@ void CVoice::HandleVoiceData()
 	{
 		// Get data into buffer from ringbuffer.
 		int16_t aBuffer[SamplesPerFrame];
-
-		size_t OldReadIdx = m_Buffer.m_ReadIndex;
-		size_t OldCurLength = m_Buffer.CurrentLength();
-		size_t OldTotalLength = m_Buffer.TotalLength();
 
 		if(!m_Buffer.Pop(aBuffer, SamplesPerFrame))
 		{
@@ -836,7 +832,7 @@ void CVoice::HandleVoiceData()
 	if(m_AvailableTime < getTime())
 		m_AvailableTime = getTime();
 
-	m_AvailableTime += (double)FramesAvailable * m_EncoderSettings.FrameTime;
+	m_AvailableTime += static_cast<double>(FramesAvailable) * m_EncoderSettings.FrameTime;
 }
 
 void CVoice::BroadcastVoiceData(IClient *pClient, size_t nBytes, unsigned char *pData)
